@@ -53,6 +53,18 @@ python tools/make_sample_template.py Templates/modele_standard.docx
 Données de démonstration : copier `examples/collaborateur_exemple.json` dans `Collaborateurs/`
 et `examples/projets_exemple.json` dans `Projets/Projets.json`.
 
+## CLI hors ligne (sans interface graphique)
+
+```bash
+cvgenerator --home /donnees collaborateurs          # lister les collaborateurs
+cvgenerator --home /donnees projets                  # lister les projets ([confidentiel] signalé)
+cvgenerator --home /donnees generer --collaborateur dupont-jean \
+    --modele modele_standard.docx --langue en --pdf  # DOCX + PDF dans Exports/
+```
+
+Options de `generer` : `--projets REF1,REF2` (sélection), `--confidentiels` (inclure les projets
+confidentiels, exclus par défaut), `--sortie CHEMIN`, `--pdf` (LibreOffice local).
+
 ## Génération hors ligne (API)
 
 ```python

@@ -1,0 +1,10 @@
+{
+  "langue": "de",
+  "nom_complet": "Jean Dupont",
+  "titre": "Senior Berater Projektmanagement",
+  "resume": "15 ans d'expérience en conduite de projets internationaux pour le secteur public.",
+  "projets": {
+    "PROJ-001": "Überholung des Informationssystems für Zuschüsse.",
+    "PROJ-002": "Audit et refonte des processus de conformité."
+  }
+}
