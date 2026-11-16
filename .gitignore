@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+
+# Données d'exécution créées au déploiement (voir cahier des charges §11)
+/Collaborateurs/*.json
+/Projets/Projets.json
+/Templates/*.docx
+/Translations/*.json
+/Exports/*
+!Collaborateurs/.gitkeep
+!Projets/.gitkeep
+!Templates/.gitkeep
+!Translations/.gitkeep
+!Exports/.gitkeep

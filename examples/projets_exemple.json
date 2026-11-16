@@ -1,0 +1,34 @@
+[
+  {
+    "reference": "PROJ-001",
+    "client": "Administration régionale exemple",
+    "secteur": "Public",
+    "pays": "Belgique",
+    "debut": "2020-01",
+    "fin": "2023-06",
+    "montant": 1250000.0,
+    "description": {
+      "fr": "Refonte du système d'information de gestion des subsides.",
+      "en": "Overhaul of the grant management information system.",
+      "de": "Überholung des Informationssystems für Zuschüsse.",
+      "nl": "Vernieuwing van het informatiesysteem voor subsidies.",
+      "es": "Renovación del sistema de información de subvenciones.",
+      "it": "Rinnovamento del sistema informativo per le sovvenzioni."
+    },
+    "confidentiel": false
+  },
+  {
+    "reference": "PROJ-002",
+    "client": "Client privé sous NDA",
+    "secteur": "Banque",
+    "pays": "Luxembourg",
+    "debut": "2023-09",
+    "fin": null,
+    "montant": null,
+    "description": {
+      "fr": "Audit et refonte des processus de conformité.",
+      "en": "Audit and redesign of compliance processes."
+    },
+    "confidentiel": true
+  }
+]
