@@ -26,6 +26,7 @@ dev = [
 GestionCollaborateur = "cvgenerator.ui.gestion_collaborateur:main"
 GestionProjets = "cvgenerator.ui.gestion_projets:main"
 GenerateurCV = "cvgenerator.ui.generateur_cv:main"
+cvgenerator = "cvgenerator.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

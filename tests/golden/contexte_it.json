@@ -1,0 +1,10 @@
+{
+  "langue": "it",
+  "nom_complet": "Jean Dupont",
+  "titre": "Consulente senior in gestione progetti",
+  "resume": "15 ans d'expérience en conduite de projets internationaux pour le secteur public.",
+  "projets": {
+    "PROJ-001": "Rinnovamento del sistema informativo per le sovvenzioni.",
+    "PROJ-002": "Audit et refonte des processus de conformité."
+  }
+}

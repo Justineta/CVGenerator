@@ -1,0 +1,10 @@
+{
+  "langue": "en",
+  "nom_complet": "Jean Dupont",
+  "titre": "Senior project management consultant",
+  "resume": "15 years of experience leading international projects for the public sector.",
+  "projets": {
+    "PROJ-001": "Overhaul of the grant management information system.",
+    "PROJ-002": "Audit and redesign of compliance processes."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "langue": "nl",
+  "nom_complet": "Jean Dupont",
+  "titre": "Senior consultant projectmanagement",
+  "resume": "15 ans d'expérience en conduite de projets internationaux pour le secteur public.",
+  "projets": {
+    "PROJ-001": "Vernieuwing van het informatiesysteem voor subsidies.",
+    "PROJ-002": "Audit et refonte des processus de conformité."
+  }
+}
