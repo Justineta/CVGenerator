@@ -112,9 +112,14 @@ class FenetreCrud(QMainWindow):
         self._enregistrer = enregistrer
         self._supprimer = supprimer
         self._etiquette = etiquette
+        self._objets: list = []
 
         central = QWidget(self)
         layout = QVBoxLayout(central)
+        self.filtre = QLineEdit()
+        self.filtre.setPlaceholderText("Filtrer...")
+        self.filtre.textChanged.connect(self._appliquer_filtre)
+        layout.addWidget(self.filtre)
         self.table = QTableWidget(0, 2)
         self.table.setHorizontalHeaderLabels([cle, "label"])
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -139,7 +144,18 @@ class FenetreCrud(QMainWindow):
         self.rafraichir()
 
     def rafraichir(self) -> None:
-        objets = self._lister()
+        self._objets = list(self._lister())
+        self._appliquer_filtre()
+
+    def _appliquer_filtre(self) -> None:
+        texte = self.filtre.text().strip().lower()
+        objets = self._objets
+        if texte:
+            objets = [
+                o for o in objets
+                if texte in str(getattr(o, self._cle)).lower()
+                or texte in self._etiquette(o).lower()
+            ]
         self.table.setRowCount(len(objets))
         for i, obj in enumerate(objets):
             cle_valeur = getattr(obj, self._cle)

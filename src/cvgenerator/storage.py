@@ -5,12 +5,15 @@ import os
 import shutil
 import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 
-from .models import Collaborateur, Projet, from_dict, to_dict, valider_id
+from .models import Collaborateur, Projet, from_dict, to_dict
+from .validation import valider_collaborateur, valider_projet
 
-DOSSIERS_DONNEES = ("Collaborateurs", "Projets", "Templates", "Translations", "Exports")
+DOSSIERS_DONNEES = ("Collaborateurs", "Projets", "Templates", "Translations", "Exports", "Journaux")
 FICHIER_PROJETS = "Projets.json"
+FICHIER_JOURNAL = "audit.jsonl"
 
 
 class DataStore:
@@ -61,6 +64,10 @@ class DataStore:
     def exports_dir(self) -> Path:
         return self.root / "Exports"
 
+    @property
+    def journaux_dir(self) -> Path:
+        return self.root / "Journaux"
+
     @staticmethod
     def _lire_json(path: Path) -> dict | list:
         with open(path, encoding="utf-8") as f:
@@ -69,6 +76,8 @@ class DataStore:
     @staticmethod
     def _ecrire_json(path: Path, data) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            shutil.copyfile(path, path.with_name(path.name + ".bak"))
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -83,6 +92,23 @@ class DataStore:
             except OSError:
                 pass
             raise
+
+    def _journaliser(self, action: str, cible: str) -> None:
+        self.journaux_dir.mkdir(parents=True, exist_ok=True)
+        ligne = {
+            "date": datetime.now(timezone.utc).isoformat(),
+            "action": action,
+            "cible": cible,
+        }
+        with open(self.journaux_dir / FICHIER_JOURNAL, "a", encoding="utf-8") as f:
+            f.write(json.dumps(ligne, ensure_ascii=False) + "\n")
+
+    def lire_journal(self) -> list[dict]:
+        path = self.journaux_dir / FICHIER_JOURNAL
+        if not path.is_file():
+            return []
+        with open(path, encoding="utf-8") as f:
+            return [json.loads(ligne) for ligne in f if ligne.strip()]
 
     def lister_collaborateurs(self) -> list[Collaborateur]:
         if not self.collaborateurs_dir.is_dir():
@@ -99,15 +125,18 @@ class DataStore:
         return from_dict(Collaborateur, self._lire_json(path))
 
     def save_collaborateur(self, collaborateur: Collaborateur) -> None:
-        if not valider_id(collaborateur.id):
-            raise ValueError(f"Identifiant invalide: {collaborateur.id!r}")
+        erreurs = valider_collaborateur(collaborateur)
+        if erreurs:
+            raise ValueError("; ".join(erreurs))
         self._ecrire_json(self.collaborateurs_dir / f"{collaborateur.id}.json", to_dict(collaborateur))
+        self._journaliser("save_collaborateur", collaborateur.id)
 
     def delete_collaborateur(self, id_collaborateur: str) -> None:
         path = self.collaborateurs_dir / f"{id_collaborateur}.json"
         if not path.is_file():
             raise FileNotFoundError(f"Collaborateur introuvable: {id_collaborateur}")
         path.unlink()
+        self._journaliser("delete_collaborateur", id_collaborateur)
 
     def charger_projets(self) -> list[Projet]:
         path = self.projets_dir / FICHIER_PROJETS
@@ -116,7 +145,12 @@ class DataStore:
         return [from_dict(Projet, p) for p in self._lire_json(path)]
 
     def save_projets(self, projets: list[Projet]) -> None:
+        for p in projets:
+            erreurs = valider_projet(p)
+            if erreurs:
+                raise ValueError(f"{p.reference}: " + "; ".join(erreurs))
         self._ecrire_json(self.projets_dir / FICHIER_PROJETS, [to_dict(p) for p in projets])
+        self._journaliser("save_projets", f"{len(projets)} projet(s)")
 
     def lister_modeles(self) -> list[str]:
         if not self.templates_dir.is_dir():

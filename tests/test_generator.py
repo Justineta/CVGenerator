@@ -13,7 +13,7 @@ from cvgenerator.generator import (
     filtrer_projets,
     generer_docx,
 )
-from cvgenerator.models import Collaborateur, Projet, from_dict
+from cvgenerator.models import LANGUES, Collaborateur, Projet, from_dict
 from cvgenerator.storage import DataStore
 
 DOSXTPL_DISPONIBLE = importlib.util.find_spec("docxtpl") is not None
@@ -72,6 +72,22 @@ class TestContexte(unittest.TestCase):
         self.assertEqual(ctx["langue"], "en")
         self.assertEqual(ctx["traductions"]["profil"], "Profile")
         self.assertTrue(ctx["date_generation"])
+
+    def test_contexte_toutes_les_langues(self):
+        c = _exemple_collaborateur()
+        projets = filtrer_projets(_exemple_projets(), inclure_confidentiels=True)
+        for langue in LANGUES:
+            ctx = construire_contexte(c, projets, langue, {})
+            self.assertEqual(ctx["langue"], langue)
+            self.assertTrue(ctx["collaborateur"]["nom_complet"])
+            self.assertTrue(ctx["collaborateur"]["titre"], f"titre vide pour {langue}")
+            self.assertTrue(ctx["projets"][0]["description"], f"description vide pour {langue}")
+        ctx_fr = construire_contexte(c, projets, "fr", {})
+        self.assertEqual(ctx_fr["collaborateur"]["titre"], "Consultant senior en gestion de projets")
+        ctx_de = construire_contexte(c, projets, "de", {})
+        self.assertEqual(ctx_de["collaborateur"]["titre"], "Senior Berater Projektmanagement")
+        ctx_nl = construire_contexte(c, projets, "nl", {})
+        self.assertEqual(ctx_nl["collaborateur"]["resume"], ctx_fr["collaborateur"]["resume"])
 
 
 @unittest.skipUnless(DOSXTPL_DISPONIBLE and PYTHON_DOCX_DISPONIBLE, "docxtpl/python-docx non installés")

@@ -40,7 +40,7 @@ class TestDataStore(unittest.TestCase):
             self.store.save_collaborateur(Collaborateur(id="../pirate"))
 
     def test_ecriture_atomique_json_valide(self):
-        c = Collaborateur(id="a-b", nom="Nom", diplomes=[])
+        c = Collaborateur(id="a-b", nom="Nom", prenom="Prenom", diplomes=[])
         self.store.save_collaborateur(c)
         brut = (self.store.collaborateurs_dir / "a-b.json").read_text(encoding="utf-8")
         donnees = json.loads(brut)
@@ -67,6 +67,35 @@ class TestDataStore(unittest.TestCase):
     def test_to_dict_json_serialisable(self):
         c = from_dict(Collaborateur, json.loads(json.dumps(to_dict(Collaborateur(id="x", nom="N")))))
         self.assertEqual(c.id, "x")
+
+    def test_sauvegarde_bak_a_la_reecriture(self):
+        c = Collaborateur(id="a-b", nom="Nom", prenom="Prenom")
+        self.store.save_collaborateur(c)
+        c.nom = "NouveauNom"
+        self.store.save_collaborateur(c)
+        bak = self.store.collaborateurs_dir / "a-b.json.bak"
+        self.assertTrue(bak.is_file())
+        self.assertEqual(json.loads(bak.read_text(encoding="utf-8"))["nom"], "Nom")
+        self.assertEqual(self.store.get_collaborateur("a-b").nom, "NouveauNom")
+
+    def test_journal_audit(self):
+        c = Collaborateur(id="a-b", nom="Nom", prenom="Prenom")
+        self.store.save_collaborateur(c)
+        self.store.save_projets([Projet(reference="PROJ-001")])
+        self.store.delete_collaborateur("a-b")
+        journal = self.store.lire_journal()
+        actions = [(e["action"], e["cible"]) for e in journal]
+        self.assertEqual(actions, [
+            ("save_collaborateur", "a-b"),
+            ("save_projets", "1 projet(s)"),
+            ("delete_collaborateur", "a-b"),
+        ])
+        for e in journal:
+            self.assertIn("date", e)
+
+    def test_journal_absent_retourne_liste_vide(self):
+        store2 = DataStore(Path(self._tmp.name) / "vide2")
+        self.assertEqual(store2.lire_journal(), [])
 
 
 if __name__ == "__main__":

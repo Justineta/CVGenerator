@@ -90,12 +90,26 @@ Les tests couvrent la sérialisation des modèles, le stockage JSON atomique, le
 et le filtrage des projets confidentiels. Le test de rendu DOCX est ignoré si
 `docxtpl`/`python-docx` ne sont pas installés.
 
-## Sécurité
+## Intégrité des données
 
+- **Validation** (`cvgenerator/validation.py`) : chaque sauvegarde de collaborateur ou de projet
+  est validée (id, nom/prénom, email, champs obligatoires des sous-objets, référence et montant des projets) ;
+  une donnée invalide est refusée avec la liste des erreurs.
+- **Sauvegarde** : avant toute réécriture, l'ancien fichier JSON est conservé en `<fichier>.bak`.
+- **Journal d'audit** : chaque mutation est ajoutée à `Journaux/audit.jsonl` (date UTC, action, cible).
 - Écritures JSON atomiques (fichier temporaire + `os.replace` + `fsync`) pour éviter la corruption
   lors d'un arrêt brutal ou d'un accès concurrent.
 - Identifiants de collaborateurs restreints à `[a-z0-9][a-z0-9\-_]*` (pas de traversée de dossiers).
+
+## Sécurité
+
 - Aucun service externe, aucune donnée envoyée sur le réseau : compatible environnement air-gap.
+
+## CI
+
+Un workflow GitHub Actions (`.github/workflows/tests.yml`) exécute la suite `unittest`
+sur Python 3.10–3.13 à chaque push/PR, avec `docxtpl`/`python-docx` installés pour
+activer aussi le test de rendu DOCX.
 
 ## Technologies (cahier des charges §12)
 
