@@ -1,0 +1,51 @@
+{
+  "id": "dupont-jean",
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "email": "jean.dupont@example.com",
+  "telephone": "+32 2 000 00 00",
+  "adresse": "Bruxelles, Belgique",
+  "titre": {
+    "fr": "Consultant senior en gestion de projets",
+    "en": "Senior project management consultant",
+    "de": "Senior Berater Projektmanagement",
+    "nl": "Senior consultant projectmanagement",
+    "es": "Consultor senior en gestión de proyectos",
+    "it": "Consulente senior in gestione progetti"
+  },
+  "resume": {
+    "fr": "15 ans d'expérience en conduite de projets internationaux pour le secteur public.",
+    "en": "15 years of experience leading international projects for the public sector."
+  },
+  "diplomes": [
+    {"intitule": "Master en sciences de gestion", "etablissement": "Université de Liège", "annee": 2010, "pays": "Belgique"}
+  ],
+  "certifications": [
+    {"nom": "PMP", "organisme": "PMI", "annee": 2015}
+  ],
+  "publications": [],
+  "competences": [
+    {"domaine": "Gestion de projet", "niveau": "expert", "description": ""},
+    {"domaine": "Analyse financière", "niveau": "avance", "description": ""}
+  ],
+  "langues": [
+    {"langue": "Français", "niveau": "C2"},
+    {"langue": "English", "niveau": "C1"},
+    {"langue": "Nederlands", "niveau": "B2"}
+  ],
+  "experiences": [
+    {
+      "entreprise": "Exemple SPRL",
+      "poste": "Chef de projet",
+      "debut": "2015-01",
+      "fin": null,
+      "description": {
+        "fr": "Pilotage de projets SI pour des administrations régionales.",
+        "en": "Led IS projects for regional administrations."
+      }
+    }
+  ],
+  "projets": [
+    {"reference": "PROJ-001", "role": "Chef de projet", "periode": "2020-2023"}
+  ]
+}
