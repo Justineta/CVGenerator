@@ -92,6 +92,10 @@ pyinstaller specs/GenerateurCV.spec        --distpath dist --workpath build
 Distribuer `dist/` + un installeur LibreOffice hors ligne sur les postes isolés.
 La conversion PDF requiert `soffice`/`libreoffice` présent localement (aucun appel réseau).
 
+Les `.exe` Windows sont aussi produits automatiquement par la CI
+(`.github/workflows/build-exe.yml`, runner `windows-latest`) et publiés en **artifact**
+`CVGenerator-exe` de chaque run (onglet Actions du dépôt, ou de la PR).
+
 ## Tests
 
 ```bash

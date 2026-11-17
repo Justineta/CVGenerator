@@ -1,0 +1,46 @@
+name: build-exe
+
+on:
+  push:
+    branches: [main, "vibe/*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installation des dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pyinstaller
+
+      - name: Compilation des 3 exécutables
+        run: |
+          pyinstaller specs\GestionCollaborateur.spec --distpath dist --workpath build
+          pyinstaller specs\GestionProjets.spec --distpath dist --workpath build
+          pyinstaller specs\GenerateurCV.spec --distpath dist --workpath build
+
+      - name: Vérification des exécutables produits
+        shell: pwsh
+        run: |
+          foreach ($exe in "GestionCollaborateur.exe", "GestionProjets.exe", "GenerateurCV.exe") {
+            $p = "dist\$exe"
+            if (-not (Test-Path $p)) { throw "Exécutable manquant: $p" }
+            $taille = [math]::Round((Get-Item $p).Length / 1MB, 1)
+            Write-Host "$exe OK (${taille} Mo)"
+          }
+
+      - name: Publication des exécutables (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: CVGenerator-exe
+          path: dist/*.exe
+          retention-days: 30
